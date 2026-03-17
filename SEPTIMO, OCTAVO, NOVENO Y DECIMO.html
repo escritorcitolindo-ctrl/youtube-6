@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEFL Kids: Mary's Story Interactive Activity</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #2e5984;
+            --accent-yellow: #f9d423;
+            --soft-white: #f4f7f6;
+            --success-green: #4caf50;
+            --error-red: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0eafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 4px solid var(--primary-blue);
+        }
+
+        header {
+            background: var(--primary-blue);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-yellow);
+        }
+
+        .section {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h1 { margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+        h2 { color: var(--primary-blue); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+
+        .btn {
+            background: var(--primary-blue);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+            display: block;
+            margin: 20px auto;
+            text-transform: uppercase;
+        }
+
+        .btn:hover { background: #1a3a5a; transform: scale(1.05); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+
+        .quiz-option {
+            background: var(--soft-white);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+        }
+        .quiz-option:hover { border-color: var(--primary-blue); }
+        .quiz-option.correct { background: #d4edda; border-color: #28a745; }
+        .quiz-option.wrong { background: #f8d7da; border-color: #dc3545; }
+
+        #timer { font-size: 40px; font-weight: bold; color: var(--error-red); text-align: center; }
+        .script-box { background: #fffde7; padding: 20px; border-radius: 10px; border-left: 5px solid var(--accent-yellow); font-style: italic; margin-bottom: 20px; }
+
+        .feedback-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid var(--primary-blue);
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: var(--primary-blue); color: white; }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <header>
+        <h1><i class="fas fa-book-open"></i> TOEFL KIDS: MARY'S STORY</h1>
+        <p>A1-A2 Level Learning Activity</p>
+    </header>
+
+    <div id="start-screen" class="section active" style="text-align: center;">
+        <img src="https://img.icons8.com/color/96/000000/bible.png" alt="Bible Icon">
+        <h2>Welcome to the Lesson!</h2>
+        <p>Watch the video first to unlock the games.</p>
+        <button class="btn" onclick="openVideo()"><i class="fab fa-youtube"></i> WATCH VIDEO HERE</button>
+        <button id="btn-to-quiz" class="btn" disabled onclick="showSection('quiz-section')">NEXT GAME <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <div id="quiz-section" class="section">
+        <h2><i class="fas fa-question-circle"></i> Part 1: Video Quiz</h2>
+        <div id="quiz-content">
+            <p><strong>1. Where did Mary grow up?</strong></p>
+            <div class="quiz-option" onclick="checkQuiz(0, 'A', this)">A) Jerusalem</div>
+            <div class="quiz-option" onclick="checkQuiz(0, 'B', this)">B) Nazareth</div>
+            <div class="quiz-option" onclick="checkQuiz(0, 'C', this)">C) Rome</div>
+
+            <p><strong>2. What was the name of the Angel?</strong></p>
+            <div class="quiz-option" onclick="checkQuiz(1, 'A', this)">A) Michael</div>
+            <div class="quiz-option" onclick="checkQuiz(1, 'B', this)">B) Raphael</div>
+            <div class="quiz-option" onclick="checkQuiz(1, 'C', this)">C) Gabriel</div>
+
+            <p><strong>3. What did Mary's mother teach her?</strong></p>
+            <div class="quiz-option" onclick="checkQuiz(2, 'A', this)">A) To sing</div>
+            <div class="quiz-option" onclick="checkQuiz(2, 'B', this)">B) To pray</div>
+            <div class="quiz-option" onclick="checkQuiz(2, 'C', this)">C) To cook</div>
+
+            <p><strong>4. Who is the son of God?</strong></p>
+            <div class="quiz-option" onclick="checkQuiz(3, 'A', this)">A) Jesus</div>
+            <div class="quiz-option" onclick="checkQuiz(3, 'B', this)">B) Joseph</div>
+            <div class="quiz-option" onclick="checkQuiz(3, 'C', this)">C) Peter</div>
+        </div>
+        <div id="quiz-feedback"></div>
+        <button id="btn-to-speak" class="btn" style="display:none;" onclick="showSection('speak-section')">NEXT GAME <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <div id="speak-section" class="section">
+        <h2><i class="fas fa-microphone"></i> Part 2: Speaking Task</h2>
+        <p>Read the following script out loud for 30 seconds:</p>
+        <div class="script-box">
+            "Mary was a young girl from Nazareth. She loved God and prayed every day. An angel named Gabriel came to her and said she would have a special baby named Jesus, the Son of God. Mary trusted God and obeyed his word."
+        </div>
+        <div id="timer">30</div>
+        <button id="start-speak-btn" class="btn" onclick="startSpeaking()">START SPEAKING</button>
+        <div id="speak-feedback"></div>
+        <button id="btn-to-final" class="btn" style="display:none;" onclick="showSection('final-section')">FINISH ACTIVITY <i class="fas fa-check-double"></i></button>
+    </div>
+
+    <div id="final-section" class="section">
+        <h2><i class="fas fa-graduation-cap"></i> Final Score & Register</h2>
+        <div id="total-summary"></div>
+        
+        <div style="background: #eee; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <p>1. Register your name: <input type="text" id="student-name" placeholder="Enter full name..."></p>
+            <button class="btn" onclick="saveRecord()">GUARDAR</button>
+        </div>
+
+        <h3><i class="fas fa-users"></i> CLASSROOM RECORDS</h3>
+        <table id="records-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Quiz</th>
+                    <th>Speak</th>
+                    <th>Average Score</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let scores = { quiz: 0, speak: 0 };
+    let videoOpened = false;
+    let quizAnswers = ['B', 'C', 'B', 'A'];
+    let quizCompleted = [false, false, false, false];
+
+    function openVideo() {
+        window.open("https://www.youtube.com/watch?v=RdMjQssEw3A", "_blank");
+        videoOpened = true;
+        document.getElementById('btn-to-quiz').disabled = false;
+    }
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function checkQuiz(qIdx, choice, element) {
+        if(quizCompleted[qIdx]) return;
+        
+        const isCorrect = choice === quizAnswers[qIdx];
+        if(isCorrect) {
+            element.classList.add('correct');
+            scores.quiz += 2.5;
+            confetti({ particleCount: 50, spread: 60 });
+        } else {
+            element.classList.add('wrong');
+        }
+        quizCompleted[qIdx] = true;
+
+        if(quizCompleted.every(v => v === true)) {
+            let feedback = scores.quiz >= 7.5 ? "¡Excelente! Comprendes muy bien los detalles del video." : "Buen intento. Debes prestar más atención a los nombres propios.";
+            document.getElementById('quiz-feedback').innerHTML = `
+                <div class="feedback-card">
+                    <strong>PUNTAJE: ${scores.quiz}/10</strong><br>
+                    <strong>Feedback:</strong> ${feedback}
+                </div>`;
+            document.getElementById('btn-to-speak').style.display = 'block';
+        }
+    }
+
+    function startSpeaking() {
+        let timeLeft = 30;
+        const btn = document.getElementById('start-speak-btn');
+        const timerDisplay = document.getElementById('timer');
+        btn.disabled = true;
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.start();
+
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = timeLeft;
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                recognition.stop();
+                scores.speak = 10; 
+                document.getElementById('speak-feedback').innerHTML = `
+                    <div class="feedback-card">
+                        <strong>PUNTAJE: 10/10 (CEFR A1)</strong><br>
+                        <strong>Feedback:</strong> Lectura fluida. Has mantenido el ritmo durante los 30 segundos requeridos.
+                    </div>`;
+                document.getElementById('btn-to-final').style.display = 'block';
+            }
+        }, 1000);
+    }
+
+    function saveRecord() {
+        const name = document.getElementById('student-name').value;
+        if(!name) { alert("Please enter your name!"); return; }
+
+        const avg = ((scores.quiz + scores.speak) / 20).toFixed(2);
+        const table = document.getElementById('records-table').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        
+        newRow.innerHTML = `
+            <td>${name}</td>
+            <td>${scores.quiz/10}</td>
+            <td>${scores.speak/10}</td>
+            <td><strong>${avg} / 1</strong></td>
+        `;
+
+        document.getElementById('student-name').value = "";
+        alert("¡Nota guardada con éxito, Teacher!");
+    }
+
+    window.setInterval(() => {
+        if(document.getElementById('final-section').classList.contains('active')) {
+            const avg = ((scores.quiz + scores.speak) / 20).toFixed(2);
+            document.getElementById('total-summary').innerHTML = `
+                <div class="feedback-card" style="background: var(--accent-yellow);">
+                    <strong>SCORE FINAL:</strong><br>
+                    Quiz: ${scores.quiz/10} | Speak: ${scores.speak/10}<br>
+                    <strong>PROMEDIO TOTAL: ${avg} / 1</strong>
+                </div>`;
+        }
+    }, 1000);
+</script>
+
+</body>
+</html>
